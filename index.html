@@ -1,357 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sportlink - Live Sports Streaming</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <title>Hotstar</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+  
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css"/>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            min-height: 100vh;
-            color: #fff;
-        }
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-        .header {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px 40px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
+  <!-- Plyr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.polyfilled.js"></script>
 
-        .logo {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .channel-tag {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .video-section {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .video-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .video-title {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 0, 0, 0.2);
-            padding: 6px 16px;
-            border-radius: 20px;
-            border: 1px solid #ff0000;
-        }
-
-        .live-dot {
-            width: 10px;
-            height: 10px;
-            background: #ff0000;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.2);
-            }
-        }
-
-        .video-wrapper {
-            position: relative;
-            padding-bottom: 56.25%;
-            background: #000;
-        }
-
-        video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            outline: none;
-        }
-
-        .controls {
-            padding: 20px 30px;
-            background: rgba(0, 0, 0, 0.6);
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .status {
-            margin-left: auto;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .info-card {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(102, 126, 234, 0.5);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-        }
-
-        .info-card h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #667eea;
-        }
-
-        .info-card p {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-        }
-
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-            color: #667eea;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .logo {
-                font-size: 24px;
-            }
-
-            .video-title {
-                font-size: 18px;
-            }
-
-            .controls {
-                justify-content: center;
-            }
-        }
-    </style>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .plyr {
+      height: 100%;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">⚡ Sportlink</div>
-        <div class="channel-tag">Hotstar-Bengali</div>
-    </div>
+  <div class="video-container">
+    <video autoplay playsinline muted id="player" controls preload="metadata"></video>
+  </div>
 
-    <div class="container">
-        <div class="video-section">
-            <div class="video-header">
-                <div class="video-title">Live Sports Stream</div>
-                <div class="live-indicator">
-                    <div class="live-dot"></div>
-                    <span>LIVE</span>
-                </div>
-            </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const video = document.getElementById("player");
+      const source = "https://jcevents.hotstar.com/bpk-tv/e03bbf7688f4b14faa3782e78851c3d9_CTV/Fallback/e03bbf7688f4b14faa3782e78851c3d9.m3u8?|cookie=hdntl=exp=1776588431~acl=%2f*~id=09c42fbd308f9d619e1f17e3e95a09d4~data=hdntl~hmac=3fa166ef73a70c998f63844c90390df3daf7d4aa81e171aaf7ae075a7210ba23&User-agent=Hotstar;in.startv.hotstar/25.02.24.8.11169%20(Android/15)&origin=https://www.hotstar.com&Referer=https://www.hotstar.com";
 
-            <div class="video-wrapper">
-                <div class="loading" id="loading">Loading stream...</div>
-                <video id="video" controls autoplay></video>
-            </div>
+      const defaultOptions = {
+        autoplay: true,
+        controls: [
+          'play', 'rewind', 'fast-forward', 'progress', 'current-time',
+          'mute', 'volume', 'settings', 'fullscreen'
+        ],
+        settings: ['quality']
+      };
 
-            <div class="controls">
-                <button class="btn" onclick="playStream()">▶ Play</button>
-                <button class="btn" onclick="pauseStream()">⏸ Pause</button>
-                <button class="btn" onclick="reloadStream()">🔄 Reload</button>
-                <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-                <div class="status" id="status">Initializing...</div>
-            </div>
-        </div>
+      let player;
 
-        <div class="info-grid">
-            <div class="info-card">
-                <h3>📺 Stream Quality</h3>
-                <p>Adaptive streaming with automatic quality adjustment based on your connection speed.</p>
-            </div>
-            <div class="info-card">
-                <h3>🌐 Live Coverage</h3>
-                <p>Watch live sports events and matches in Bengali commentary from Hotstar.</p>
-            </div>
-            <div class="info-card">
-                <h3>⚡ Fast Loading</h3>
-                <p>HLS technology ensures smooth playback with minimal buffering.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const video = document.getElementById('video');
-        const loading = document.getElementById('loading');
-        const status = document.getElementById('status');
-        const streamUrl = 'https://live.myziboplay.xyz/JioHotStar.IPL.Bangla2026/index.m3u8';
-
-        function initStream() {
-            if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                    backBufferLength: 90
-                });
-
-                hls.loadSource(streamUrl);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    loading.style.display = 'none';
-                    status.textContent = 'Stream Ready';
-                    video.play().catch(e => {
-                        status.textContent = 'Click Play to start';
-                    });
-                });
-
-                hls.on(Hls.Events.ERROR, function(event, data) {
-                    if (data.fatal) {
-                        switch(data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                status.textContent = 'Network error - Retrying...';
-                                hls.startLoad();
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                status.textContent = 'Media error - Recovering...';
-                                hls.recoverMediaError();
-                                break;
-                            default:
-                                status.textContent = 'Fatal error';
-                                hls.destroy();
-                                break;
-                        }
-                    }
-                });
-
-                window.hls = hls;
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = streamUrl;
-                video.addEventListener('loadedmetadata', function() {
-                    loading.style.display = 'none';
-                    status.textContent = 'Stream Ready';
-                    video.play();
-                });
-            } else {
-                status.textContent = 'HLS not supported in this browser';
+      function setupPlayer(hls, qualities = []) {
+        player = new Plyr(video, {
+          ...defaultOptions,
+          quality: qualities.length ? {
+            default: qualities[0],
+            options: qualities,
+            forced: true,
+            onChange: q => {
+              hls.levels.forEach((level, index) => {
+                if (level.height === q) {
+                  hls.currentLevel = index;
+                }
+              });
             }
-        }
+          } : {}
+        });
 
-        function playStream() {
-            video.play();
-            status.textContent = 'Playing';
-        }
+        // 🔁 AUTO RESUME
+        setInterval(() => {
+          if (video.paused && video.readyState > 2) {
+            video.play().catch(()=>{});
+          }
+        }, 3000);
 
-        function pauseStream() {
-            video.pause();
-            status.textContent = 'Paused';
-        }
+        // 🔊 AUTO UNMUTE (on first interaction)
+        const unmute = () => {
+          video.muted = false;
+          video.volume = 1;
+          document.removeEventListener("click", unmute);
+          document.removeEventListener("touchstart", unmute);
+        };
 
-        function reloadStream() {
-            loading.style.display = 'block';
-            status.textContent = 'Reloading...';
-            if (window.hls) {
-                window.hls.destroy();
-            }
-            initStream();
-        }
+        document.addEventListener("click", unmute);
+        document.addEventListener("touchstart", unmute);
+      }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                video.requestFullscreen().catch(err => {
-                    status.textContent = 'Fullscreen failed';
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          autoStartLoad: true
+        });
 
-        // Initialize stream on page load
-        initStream();
-    </script>
+        hls.loadSource(source);
+        hls.attachMedia(video);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+          const availableQualities = data.levels.map(l => l.height).sort((a,b) => b - a);
+          video.play().catch(()=>{});
+          setupPlayer(hls, availableQualities);
+        });
+
+        // 🔥 AUTO RECOVER ON ERROR
+        hls.on(Hls.Events.ERROR, function (_, data) {
+          if (data.fatal) {
+            hls.startLoad();
+          }
+        });
+
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = source;
+        video.addEventListener("loadedmetadata", () => {
+          video.play().catch(()=>{});
+          setupPlayer(null);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
